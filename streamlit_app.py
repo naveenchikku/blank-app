@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import requests
 import logging
+
 # Set page configuration
 st.set_page_config(page_title="Azure Cost Forecast", layout="wide")
 
@@ -35,6 +36,7 @@ st.markdown("""
         border-radius: 8px;
         padding: 10px;
         border: 2px solid #4CAF50;
+        text-align: center;
     }
     .stBarChart {
         background-color: #ffffff;
@@ -44,6 +46,7 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
 # Set constants
 infra_model = None
 first_integration = None
@@ -55,7 +58,6 @@ mapping_required = False
 mapping_complexity = None
 events_per_second = None
 payload_kb = None
-
 # Title and description
 st.title("🔮 Integration Fabric API Onboarding Cost Calculator")
 st.markdown("### Forecast your onboarding costs with ease!")
@@ -65,31 +67,29 @@ st.subheader("Input Parameters")
 integration_pattern = st.selectbox("Integration Pattern", ["Synchronous", "Asynchronous", "Event-based"])
 
 if integration_pattern == "Synchronous":
-    tps = st.slider("Expected TPS", 1, 30, 2,2)
-    # events_per_month = st.slider("Expected requests per month",0,200000000,50,1000)
-    payload_kb = st.number_input("Payload size (KB)", 1, 10000, 50,100)
+    tps = st.slider("Expected TPS", 1, 30, 2, 2)
+    payload_kb = st.number_input("Payload size (KB)", 1, 10000, 50, 100)
     infra_model = st.selectbox("Infrastructure Model", ["Shared", "Dedicated"])
 elif integration_pattern == "Asynchronous":
-    events_per_second = st.slider("EventHub Ingress (events/second)",0,2000,50,25)
-    storage_offered = st.slider("Storage offered(GB)",0,1000,50,50)
+    events_per_second = st.slider("EventHub Ingress (events/second)", 0, 2000, 50, 25)
+    storage_offered = st.slider("Storage offered (GB)", 0, 1000, 50, 50)
     infra_model = st.selectbox("Infrastructure Model", ["Shared", "Dedicated"])
     payload_kb = st.number_input("Payload size (KB)", 1, 1000, 50, 100)
 else:
-    events_per_second = st.slider("Events/second)",0,100,10,10)
+    events_per_second = st.slider("Events/second", 0, 100, 10, 10)
     payload_kb = st.number_input("Payload size (KB)", 1, 10000, 50, 100)
-    storage_offered = st.slider("Storage offered(GB)",0,1000,50,50)
-# # pass_through_integration = st.checkbox("Pass through Integration?")
-# if not pass_through_integration:
+    storage_offered = st.slider("Storage offered (GB)", 0, 1000, 50, 50)
+
 mapping_required = st.checkbox("Data transformation required?")
 if mapping_required:
-    no_of_fields = st.slider("No of fields",0,150,2,3)
-    mapping_complexity = st.selectbox("Transformation complexity", ["Simple", "Medium", "Complex"])   
+    no_of_fields = st.slider("No of fields", 0, 150, 2, 3)
+    mapping_complexity = st.selectbox("Transformation complexity", ["Simple", "Medium", "Complex"])
 
 if infra_model == "Dedicated":
     first_integration = st.checkbox("First Integration?")
 else:
     first_integration = None
-    
+
 submitted = st.button("💰 Forecast Cost")
 
 # Mock response and output
@@ -98,19 +98,19 @@ if submitted:
         "integration_pattern": integration_pattern,
         "infrastructure_model": infra_model,
         "first_integration": first_integration,
-        "tps" :tps,
-        "infra_model" : infra_model,
-        "storage_offered" : storage_offered,
-        "no_of_fields":no_of_fields,
+        "tps": tps,
+        "infra_model": infra_model,
+        "storage_offered": storage_offered,
+        "no_of_fields": no_of_fields,
         "mapping_required": mapping_required,
         "mapping_complexity": mapping_complexity,
         "events_per_second": events_per_second,
-        "payload_kb":payload_kb
+        "payload_kb": payload_kb
     }
     print(payload)
     try:
         # Call backend api
-        response = requests.post(url="https://func-costmeter.azurewebsites.net/api/cost-meter-poc",json=payload)
+        response = requests.post(url="https://func-costmeter.azurewebsites.net/api/cost-meter-poc", json=payload)
         response.raise_for_status()
 
         if response.status_code == 200:
@@ -129,17 +129,16 @@ if submitted:
             st.bar_chart(df)
             st.dataframe(df)
 
-
             # Display operational cost breakdown
-            st.subheader("Operational Resources Breakdown")
+            st.subheader("Holistic Resource Cost Breakdown")
             oper_cost_df = pd.DataFrame(result["operational_cost_breakdown"])
             st.table(oper_cost_df)
 
             # Export button
             st.download_button("📥 Export Azure Resource Costs as CSV", df.to_csv(), "azure_resource_costs.csv", "text/csv")
         else:
-            logging.error(f" Error in calling backend service : {str(response.content)}")
+            logging.error(f"Error in calling backend service: {str(response.content)}")
             raise Exception("Internal server error")
     except Exception as e:
-        logging.error(f" Error in calling backend service : {str(response.content)}")
+        logging.error(f"Error in calling backend service: {str(response.content)}")
         raise
