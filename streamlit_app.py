@@ -82,7 +82,7 @@ else:
 # if not pass_through_integration:
 mapping_required = st.checkbox("Data transformation required?")
 if mapping_required:
-    no_of_fields = st.slider("No of fields",0,1000,2,10)
+    no_of_fields = st.slider("No of fields",0,150,2,3)
     mapping_complexity = st.selectbox("Transformation complexity", ["Simple", "Medium", "Complex"])   
 
 if infra_model == "Dedicated":
