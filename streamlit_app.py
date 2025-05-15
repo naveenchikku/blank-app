@@ -65,7 +65,7 @@ st.subheader("Input Parameters")
 integration_pattern = st.selectbox("Integration Pattern", ["Synchronous", "Asynchronous", "Event-based"])
 
 if integration_pattern == "Synchronous":
-    tps = st.slider("Expected TPS", 1, 50, 2,2)
+    tps = st.slider("Expected TPS", 1, 30, 2,2)
     # events_per_month = st.slider("Expected requests per month",0,200000000,50,1000)
     payload_kb = st.number_input("Payload size (KB)", 1, 10000, 50,100)
     infra_model = st.selectbox("Infrastructure Model", ["Shared", "Dedicated"])
