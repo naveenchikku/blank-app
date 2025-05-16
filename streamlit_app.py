@@ -130,7 +130,7 @@ if submitted:
             st.dataframe(df)
 
             # Display operational cost breakdown
-            st.subheader("Holistic Resource Cost Breakdown")
+            st.subheader("Implementation Cost Breakdown")
             oper_cost_df = pd.DataFrame(result["operational_cost_breakdown"])
             st.table(oper_cost_df)
 
