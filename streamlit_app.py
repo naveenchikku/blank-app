@@ -120,7 +120,7 @@ if submitted:
             col1, col2, col3, col4 = st.columns(4)
             col1.metric(label="📊 Infra Cost per Month", value=f"${result['infra_cost_per_month']}")
             col2.metric(label="📊 Infra Cost per Year", value=f"${result['infra_cost_per_year']}")
-            col3.metric(label="📊 Operational Cost", value=f"${result['operational_cost']}")
+            col3.metric(label="📊 Implementation Cost", value=f"${result['operational_cost']}")
             col4.metric(label="📊 Total Cost", value=f"${result['total_cost']}")
 
             # Display Azure resource costs
